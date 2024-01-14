@@ -8,6 +8,7 @@ def update(args); end
 def render(args)
   render_debug_info(args)
   render_grid(args)
+  render_snake(args)
 end
 
 def render_grid(args)
@@ -33,6 +34,10 @@ def render_grid(args)
   end
 end
 
+def render_snake(args)
+  args.outputs.solids << args.state.head
+end
+
 def render_debug_info(args)
   return unless DEBUG
 
@@ -49,7 +54,20 @@ def render_debug_info(args)
                            r: 0, g: 0, b: 255, a: 75 }
 end
 
+def default(args)
+  args.state.head ||= {
+    x: args.grid.w / 2,
+    y: args.grid.h / 2,
+    w: GRID_SIZE,
+    h: GRID_SIZE,
+    r: 23,
+    g: 245,
+    b: 23
+  }
+end
+
 def tick(args)
+  default(args)
   handle_input(args)
   update(args)
   render(args)
