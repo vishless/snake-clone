@@ -32,7 +32,10 @@ def move_snake(args)
 end
 
 def update(args)
-  move_snake(args) if args.tick_count.mod_zero? SPEED
+  if args.tick_count.mod_zero? SPEED
+    move_snake(args) 
+    handle_boundary_collision(args)
+  end
 end
 
 def render(args)
@@ -89,6 +92,16 @@ def render_debug_info(args)
                            text: "args.grid.h: #{args.grid.h}",
                            alignment_enum: 3,
                            r: 0, g: 0, b: 255, a: 75 }
+end
+
+def handle_boundary_collision(args)
+  walls = args.state.walls
+  head = args.state.head
+
+  if [walls.left, walls.right, walls.top, walls.bottom].any_intersect_rect?(args.state.head)
+    head.x = head.x.clamp(walls.left.right, walls.right.left - GRID_SIZE)
+    head.y = head.y.clamp(walls.bottom.top, walls.top.bottom - GRID_SIZE)
+  end
 end
 
 def default(args)
