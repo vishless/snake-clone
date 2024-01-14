@@ -1,9 +1,39 @@
-GRID_SIZE = 20
 DEBUG = false
+GRID_SIZE = 20
+SPEED = 20
 
-def handle_input(args); end
+def handle_input(args)
+  inputs = args.inputs
+  head = args.state.head
 
-def update(args); end
+  head.direction = :left if inputs.left
+  head.direction = :right if inputs.right
+  head.direction = :up if inputs.up
+  head.direction = :down if inputs.down
+end
+
+def move_snake(args)
+  head = args.state.head
+  vector = { x: 0, y: 0 }
+
+  case head.direction
+  when :right
+    vector.x = 1
+  when :left
+    vector.x = -1
+  when :up
+    vector.y = 1
+  when :down
+    vector.y = -1
+  end
+
+  head.x += GRID_SIZE * vector.x
+  head.y += GRID_SIZE * vector.y
+end
+
+def update(args)
+  move_snake(args) if args.tick_count.mod_zero? SPEED
+end
 
 def render(args)
   render_debug_info(args)
@@ -38,6 +68,7 @@ def render_snake(args)
   args.outputs.solids << args.state.head
 end
 
+# TODO: Move render_debug_info to a separate class
 def render_debug_info(args)
   return unless DEBUG
 
