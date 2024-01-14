@@ -1,0 +1,17 @@
+.DS_Store
+tmp/
+logs/
+exceptions/
+builds/
+console_history.txt
+.yardoc/
+RECOVER_*
+
+# Gemfile is not supported by dragonruby yet, I'm just usign it for solargraph
+Gemfile 
+
+# Temporary
+app/repl.rb
+sprites/*
+metadata/*
+
