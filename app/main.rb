@@ -1,6 +1,6 @@
 DEBUG = false
 GRID_SIZE = 20
-SPEED = 20
+SPEED = 5
 
 def handle_input(args)
   inputs = args.inputs
@@ -32,10 +32,30 @@ def move_snake(args)
 end
 
 def update(args)
-  if args.tick_count.mod_zero? SPEED
-    move_snake(args) 
-    handle_boundary_collision(args)
-  end
+  return unless args.tick_count.mod_zero?(SPEED)
+
+  move_snake(args)
+  handle_boundary_collision(args)
+  spawn_collectable(args)
+end
+
+def spawn_collectable(args)
+  return unless args.state.collectable.nil?
+
+  x_rand = rand_ceil(args.grid.w)
+  y_rand = rand_ceil(args.grid.h)
+
+  args.state.collectable = {
+    x: x_rand * GRID_SIZE,
+    y: y_rand * GRID_SIZE,
+    h: GRID_SIZE,
+    w: GRID_SIZE,
+    r: 233, g: 23, b: 23
+  }
+end
+
+def rand_ceil(length)
+  ((length / GRID_SIZE) - 2).randomize(:ratio).ceil
 end
 
 def render(args)
@@ -43,6 +63,11 @@ def render(args)
   render_grid(args)
   render_snake(args)
   render_walls(args)
+  render_collectable(args)
+end
+
+def render_collectable(args)
+  args.outputs.solids << args.state.collectable
 end
 
 def render_grid(args)
