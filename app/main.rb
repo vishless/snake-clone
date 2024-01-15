@@ -40,6 +40,29 @@ def update(args)
   spawn_collectable(args)
 end
 
+def grow_body(args)
+  segment = if args.state.body.any?
+              args.state.body.last.clone
+            else
+              args.state.head.clone
+            end
+  vector = { x: 0, y: 0 }
+  case segment.direction
+  when :right
+    vector.x = -1
+  when :left
+    vector.x = 1
+  when :down
+    vector.y = 1
+  when :up
+    vector.y = -1
+  end
+
+  segment.x += (GRID_SIZE * vector.x)
+  segment.y += (GRID_SIZE * vector.y)
+  args.state.body << segment
+end
+
 def handle_collectable_collision(args)
   return if args.state.collectable.nil?
   return unless args.state.collectable.intersect_rect? args.state.head
@@ -47,6 +70,7 @@ def handle_collectable_collision(args)
   args.state.collectable = nil
   args.state.score += 1
   args.outputs.sounds << 'sounds/collect.wav'
+  grow_body(args)
 end
 
 def spawn_collectable(args)
@@ -118,7 +142,7 @@ def render_walls(args)
 end
 
 def render_snake(args)
-  args.outputs.solids << args.state.head
+  args.outputs.solids << [args.state.head, *args.state.body]
 end
 
 # TODO: Move render_debug_info to a separate class
@@ -185,6 +209,7 @@ def default(args)
     r: 12, g: 33, b: 245
   }
   args.state.score ||= 0
+  args.state.body ||= []
 end
 
 def tick(args)
