@@ -42,10 +42,11 @@ end
 
 def handle_collectable_collision(args)
   return if args.state.collectable.nil?
-  if args.state.collectable.intersect_rect? args.state.head
-    args.state.collectable = nil
-    args.state.score += 1
-  end
+  return unless args.state.collectable.intersect_rect? args.state.head
+
+  args.state.collectable = nil
+  args.state.score += 1
+  args.outputs.sounds << 'sounds/collect.wav'
 end
 
 def spawn_collectable(args)
