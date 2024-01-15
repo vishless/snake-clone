@@ -36,7 +36,15 @@ def update(args)
 
   move_snake(args)
   handle_boundary_collision(args)
+  handle_collectable_collision(args)
   spawn_collectable(args)
+end
+
+def handle_collectable_collision(args)
+  return if args.state.collectable.nil?
+  if args.state.collectable.intersect_rect? args.state.head
+    args.state.collectable = nil
+  end
 end
 
 def spawn_collectable(args)
