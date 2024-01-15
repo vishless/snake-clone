@@ -44,6 +44,7 @@ def handle_collectable_collision(args)
   return if args.state.collectable.nil?
   if args.state.collectable.intersect_rect? args.state.head
     args.state.collectable = nil
+    args.state.score += 1
   end
 end
 
@@ -66,12 +67,21 @@ def rand_ceil(length)
   ((length / GRID_SIZE) - 2).randomize(:ratio).ceil
 end
 
+def render_score(args)
+  args.outputs.labels << { 
+    x: args.grid.left.shift_right(2 * GRID_SIZE),
+    y: args.grid.top.shift_down(2 * GRID_SIZE),
+    text: "Score: #{args.state.score}"
+  }
+end
+
 def render(args)
   render_debug_info(args)
   render_grid(args)
   render_snake(args)
   render_walls(args)
   render_collectable(args)
+  render_score(args)
 end
 
 def render_collectable(args)
@@ -173,6 +183,7 @@ def default(args)
     w: args.grid.w,
     r: 12, g: 33, b: 245
   }
+  args.state.score ||= 0
 end
 
 def tick(args)
